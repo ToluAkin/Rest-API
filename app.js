@@ -30,10 +30,11 @@ const app = express();
 // setup morgan which gives us http request logging
 app.use(morgan('dev'));
 
-// TODO setup your api routes here
+// API routes
 const users = require('./routes/users');
 const courses = require('./routes/courses');
 
+// Add routes
 app.use('/api', users);
 app.use('/api', courses);
 

@@ -1,27 +1,43 @@
 'use strict';
 
-const Sequelize = require('sequelize');
+const { DataTypes, Model } = require('sequelize');
 
 module.exports = (sequelize) => {
-  class Course extends Sequelize.Model {}
+  class Course extends Model {}
   Course.init({
     title: {
-      type: Sequelize.STRING,
-      allowNull: false
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Course title is required'
+        },
+        notEmpty: {
+          msg: 'Please provide a course title'
+        }
+      }
     },
     description: {
-      type: Sequelize.TEXT,
-      allowNull: true
+      type: DataTypes.TEXT,
+      allowNull: true,
+      validate: {
+        notNull: {
+          msg: 'Course description is required'
+        },
+        notEmpty: {
+          msg: 'Please provide a course description'
+        }
+      }
     },
     estimatedTime: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       allowNull: true
     },
     materialsNeeded: {
-    type: Sequelize.STRING,
+    type: DataTypes.STRING,
         allowNull: true
     },
-    userId: Sequelize.INTEGER
+    userId: DataTypes.INTEGER
   }, { sequelize });
 
   Course.associate = (models) => {
