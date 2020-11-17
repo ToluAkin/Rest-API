@@ -4,33 +4,35 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const salt = bcrypt.genSaltSync(10);
 // Handler function to wrap each route.
-const { asyncHandler } = require('/middleware/async-handler');
-const { User } = require('/models/user');
+const { asyncHandler } = require('../middleware/async-handler');
+const { authenticateUser } = require('../middleware/auth-user');
+const { User } = require('../models/user');
 
 // Construct a router instance.
 const router = express.Router();
 
-// This array is used to keep track of user records as they are created.
-const users = [];
-
 // Returns the currently authenticated user.
-router.get('/users', asyncHandler(async (req, res) => {
-    await res.json(users);
-    res.status(200).end();
+router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
+    const user = await User.findOne({
+        where: {
+            emailAddress: req.currentUser.emailAddress
+        }
+    });
+    res.json(user);
 }));
 
 // Creates a user, sets the Location header to "/", and returns no content
 router.post('/users', asyncHandler(async (req, res) => {
     try {
+        if (req.body.password) {
+            req.body.password = bcrypt.hashSync(req.body.password, salt)
+        }
+
         // Get the user from the request body.
-        // await User.create(req.body);
-        const user = req.body;
-        req.body.password = bcrypt.hashSync(req.body.password, salt)
-        await users.push(user);
-        res.redirect('/');
-        res.status(201).end()
+        await User.create(req.body);
+        res.status(201).location('/').end();
     } catch (error) {
-        if (error === 'SequelizeValidationError' || error === 'SequelizeUniqueConstraintError') {
+        if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
             const errors = error.errors.map(err => err.message);
             res.status(400).json({ errors });
         } else {

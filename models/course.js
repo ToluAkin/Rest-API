@@ -5,6 +5,11 @@ const { DataTypes, Model } = require('sequelize');
 module.exports = (sequelize) => {
   class Course extends Model {}
   Course.init({
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
     title: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -19,7 +24,7 @@ module.exports = (sequelize) => {
     },
     description: {
       type: DataTypes.TEXT,
-      allowNull: true,
+      allowNull: false,
       validate: {
         notNull: {
           msg: 'Course description is required'
@@ -29,14 +34,8 @@ module.exports = (sequelize) => {
         }
       }
     },
-    estimatedTime: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    materialsNeeded: {
-    type: DataTypes.STRING,
-        allowNull: true
-    },
+    estimatedTime: DataTypes.STRING,
+    materialsNeeded: DataTypes.STRING,
     userId: DataTypes.INTEGER
   }, { sequelize });
 

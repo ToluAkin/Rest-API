@@ -3,12 +3,7 @@
 // load modules
 const express = require('express');
 const morgan = require('morgan');
-const { Sequelize } = require('sequelize');
-
-const sequelize = new Sequelize({
-  dialect: "sqlite",
-  "storage": "fsjstd-restapi.db"
-});
+const { sequelize } = require('./models');
 
 (async () => {
   await sequelize.sync({ force:true });

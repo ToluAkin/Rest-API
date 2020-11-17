@@ -16,6 +16,7 @@
     "sqlite3": "^5.0.0"
   },
   "dependencies": {
+    "basic-auth": "^2.0.1",
     "bcryptjs": "^2.4.3",
     "cli": "^1.0.1",
     "cross-env": "^5.2.0",

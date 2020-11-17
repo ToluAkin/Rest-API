@@ -4,8 +4,9 @@ const express = require('express');
 // Construct a router instance.
 const router = express.Router();
 // Handler function to wrap each route.
-const { asyncHandler } = require('/middleware/async-handler');
-const { Course } = require('/models/course');
+const { asyncHandler } = require('../middleware/async-handler');
+const { authenticateUser } = require('../middleware/auth-user');
+const { Course } = require('../models/course');
 
 const courses = [];
 
@@ -32,22 +33,32 @@ router.get('/courses/:id', asyncHandler(async (req, res) => {
 }));
 
 // Creates a course, sets the Location header to the URI for the course, and returns no content
-router.post('/courses', asyncHandler(async(req, res) => {
-    // Get the course from the request body.
-    const course = req.body;
-    await courses.push(course);
-    res.redirect('/');
-    res.status(201).end();
+router.post('/courses', authenticateUser, asyncHandler(async(req, res) => {
+    try {
+        // Get the course from the request body.
+        const course = await Course.create(req.body);
+        // Get New course
+        const courseData = course.get({ plain:true });
+        res.status(201).location(`/course/${ courseData.id }`).end();
+    } catch (error) {
+        if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
+            const errors = error.errors.map(err => err.message);
+            res.status(400).json({ errors });
+        } else {
+            throw error;
+        }
+    }
+
 }));
 
 // Updates a course and returns no content
-router.put('/courses/:id', asyncHandler(async (req, res) => {
+router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
     const course = await Course.findByPk(req.params.id);
     await course.update(req.body);
     res.status(204).end();
 }));
 
-router.delete('/courses/:id', asyncHandler(async (req, res) => {
+router.delete('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
     const course = await Course.findByPk(req.params.id);
     await course.destroy();
     res.status(204).end();
