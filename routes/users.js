@@ -13,23 +13,27 @@ const router = express.Router();
 
 // Returns the currently authenticated user.
 router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
-    const user = await User.findOne({
-        where: {
-            emailAddress: req.currentUser.emailAddress
-        }
-    });
-    res.json(user);
+    const reqBody = req.currentUser;
+    const user = await User.findOne({ where: {
+        emailAddress: reqBody.emailAddress
+    },
+    attributes: {
+        exclude: ["password", "createdAt", "updatedAt"]
+    }
+})
+    res.status(200).json(user);
 }));
 
 // Creates a user, sets the Location header to "/", and returns no content
 router.post('/users', asyncHandler(async (req, res) => {
     try {
-        if (req.body.password) {
-            req.body.password = bcrypt.hashSync(req.body.password, salt)
+        const reqBody = req.body;
+        if (reqBody.password) {
+            reqBody.password = bcrypt.hashSync(reqBody.password, salt)
         }
 
         // Get the user from the request body.
-        await User.create(req.body);
+        await User.create(reqBody);
         res.status(201).location('/').end();
     } catch (error) {
         if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
