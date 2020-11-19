@@ -6,22 +6,20 @@ const salt = bcrypt.genSaltSync(10);
 // Handler function to wrap each route.
 const { asyncHandler } = require('../middleware/async-handler');
 const { authenticateUser } = require('../middleware/auth-user');
-const { User } = require('../models/user');
+const { User } = require('../models');
 
 // Construct a router instance.
 const router = express.Router();
 
 // Returns the currently authenticated user.
 router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
-    const reqBody = req.currentUser;
-    const user = await User.findOne({ where: {
-        emailAddress: reqBody.emailAddress
-    },
-    attributes: {
-        exclude: ["password", "createdAt", "updatedAt"]
-    }
-})
-    res.status(200).json(user);
+    const user = req.currentUser;
+    res.status(200).json({
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        emailAddress: user.emailAddress
+    });
 }));
 
 // Creates a user, sets the Location header to "/", and returns no content
