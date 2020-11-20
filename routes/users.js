@@ -25,11 +25,12 @@ router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
 // Creates a user, sets the Location header to "/", and returns no content
 router.post('/users', asyncHandler(async (req, res) => {
     try {
-        const reqBody = req.body;
-        if (reqBody.password) {
-            reqBody.password = bcrypt.hashSync(reqBody.password, salt)
+        let reqBody = req.body;
+        for (const key in reqBody){
+            if (key === "password") {
+                reqBody[key] = bcrypt.hashSync(reqBody[key], salt)
+            }
         }
-
         // Get the user from the request body.
         await User.create(reqBody);
         res.status(201).location('/').end();
