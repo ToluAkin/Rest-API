@@ -25,10 +25,17 @@ router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
 // Creates a user, sets the Location header to "/", and returns no content
 router.post('/users', asyncHandler(async (req, res) => {
     try {
-        let reqBody = req.body;
-        for (const key in reqBody){
-            if (key === "password") {
-                reqBody[key] = bcrypt.hashSync(reqBody[key], salt)
+        const reqBody = req.body;
+        if (reqBody.password) {
+            reqBody.password = bcrypt.hashSync(reqBody.password, salt);
+        }
+
+        if (reqBody.emailAddress) {
+            const existingEmail = await User.findOne({ where: { emailAddress: reqBody.emailAddress }});
+            if (existingEmail) {
+                const error = new Error('The email exist already.');
+                error.status = 404;
+                throw error;
             }
         }
         // Get the user from the request body.

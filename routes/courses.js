@@ -65,9 +65,8 @@ router.post('/courses', authenticateUser, asyncHandler(async(req, res) => {
 
 // Updates a course and returns no content
 router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
-    let course;
     try {
-        course = await Course.findByPk(req.params.id);
+        const course = await Course.findByPk(req.params.id);
         if (course) {
             if (course.userId === req.currentUser.id) {
                 await course.update(req.body);
