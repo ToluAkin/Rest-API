@@ -1,17 +1,3 @@
-
-# Full Stack JavaScript Techdegree v2 - REST API Project
-
-## Overview of the Provided Project Files
-
-We've supplied the following files for you to use: 
-
-* The `seed` folder contains a starting set of data for your database in the form of a JSON file (`data.json`) and a collection of files (`context.js`, `database.js`, and `index.js`) that can be used to create your app's database and populate it with data (we'll explain how to do that below).
-* We've included a `.gitignore` file to ensure that the `node_modules` folder doesn't get pushed to your GitHub repo.
-* The `app.js` file configures Express to serve a simple REST API. We've also configured the `morgan` npm package to log HTTP requests/responses to the console. You'll update this file with the routes for the API. You'll update this file with the routes for the API.
-* The `nodemon.js` file configures the nodemon Node.js module, which we are using to run your REST API.
-* The `package.json` file (and the associated `package-lock.json` file) contain the project's npm configuration, which includes the project's dependencies.
-* The `RESTAPI.postman_collection.json` file is a collection of Postman requests that you can use to test and explore your REST API.
-
 ## Getting Started
 
 To get up and running with this project, run the following commands from the root of the folder that contains this README file.
@@ -20,7 +6,6 @@ First, install the project's dependencies using `npm`.
 
 ```
 npm install
-
 ```
 
 Second, seed the SQLite database.
@@ -36,3 +21,17 @@ npm start
 ```
 
 To test the Express server, browse to the URL [http://localhost:5000/](http://localhost:5000/).
+
+### Testing the routes
+
+- If you haven’t already, install Postman. Links and instructions are available on their website at 
+https://www.getpostman.com/.
+- Once you have Postman installed and open, click on the “Import” button in the top left hand corner of the 
+application’s window.
+- In the opened dialog, click the “Choose Files” button and browse to the folder that contains your project files.
+- Select the RESTAPI.postman_collection.json file.
+- You should now see the FSJS Techdegree: REST API Project collection in the left hand pane of the main Postman window.
+- Click on one of the available requests to load it into a tab. Click on the Send button to issue the request to the 
+local server.
+- When testing routes that require authentication, make sure to set the Authorization Type in postman to Basic Auth to 
+enter the user's username (their email address) and password.
