@@ -51,8 +51,7 @@ router.post('/courses', authenticateUser, asyncHandler(async(req, res) => {
         // Get the course from the request body.
         const course = await Course.create(req.body);
         // Get New course
-        const courseData = await Course.findOne({ where: { title: req.body.title } });
-        res.status(201).location(`/api/courses/${ courseData.id }`).end();
+        res.status(201).location(`/api/courses/${ course.id }`).end();
     } catch (error) {
         if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
             const errors = error.errors.map(err => err.message);
@@ -72,7 +71,7 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
                 await course.update(req.body);
                 res.status(204).end();
             } else {
-                res.status(403)
+                res.status(403).end();
             }
         } else {
             const error = new Error('The course you are looking for does not exist.');
@@ -96,7 +95,7 @@ router.delete('/courses/:id', authenticateUser, asyncHandler(async (req, res) =>
             await course.destroy();
             res.status(204).end();
         } else {
-            res.status(403)
+            res.status(403).end();
         }
     } else {
         const error = new Error('The course you are looking for does not exist.');
